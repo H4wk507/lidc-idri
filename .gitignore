@@ -1,1 +1,6 @@
 venv/
+nodules/
+__pycache__/
+d.npy
+*.pth
+*.png
