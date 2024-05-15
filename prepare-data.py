@@ -5,40 +5,32 @@ import numpy as np
 import pylidc as pl
 
 
-# Unused
-def save_nodules() -> None:
-    """Save nodules with subtlety >= 3 as 50x50 images in ./nodules."""
-    annos = pl.query(pl.Annotation).filter(pl.Annotation.subtlety >= 3)
+# TODO: test on whole lidc dataset 100GB
+def save_slices_and_masks2() -> None:
+    """Save imgs and masks with subtlety >= 5 as 512x512 images in ./data."""
 
-    for i in range(annos.count()):
-        anno = annos[i]
-        os.makedirs("./nodules", exist_ok=True)
-        vol = anno.scan.to_volume()
-        masks = anno.boolean_mask()
+    os.makedirs("./data/imgs", exist_ok=True)
+    os.makedirs("./data/masks", exist_ok=True)
 
-        # Make sure images are 50x50
+    plt.set_cmap("gray")
+    padding = [(512, 512), (512, 512), (0, 0)]
 
-        top_pad = (50 - masks.shape[0]) // 2
-        bottom_pad = 50 - masks.shape[0] - top_pad
+    annos = pl.query(pl.Annotation).filter(pl.Annotation.subtlety >= 5)
+    nannos = annos.count()
 
-        left_pad = (50 - masks.shape[1]) // 2
-        right_pad = 50 - masks.shape[1] - left_pad
-
-        padding = [
-            (top_pad, bottom_pad),
-            (left_pad, right_pad),
-            (0, 0),
-        ]
-
-        bbox = anno.bbox(pad=padding)
-        relevant_vol = vol[bbox]
-
-        slices_indices = anno.contour_slice_indices
-        print(slices_indices)
-        plt.set_cmap("gray")
-        for region in range(masks.shape[2]):
-            plt.axis("off")
-            plt.imsave(f"./nodules/{i}_{region}.png", relevant_vol[:, :, region])
+    for anno_idx, anno in enumerate(annos[1587:]):
+        try:
+            img = anno.scan.to_volume()
+            mask = anno.boolean_mask(pad=padding)
+            for slice_idx, slice in enumerate(anno.contour_slice_indices):
+                if slice_idx >= mask.shape[2]:
+                    break
+                plt.imsave(f"./data/imgs/img_{anno_idx}_{slice_idx}.png", img[:, :, slice])
+                plt.imsave(f"./data/masks/mask_{anno_idx}_{slice_idx}.png", mask[:, :, slice_idx])
+        except Exception as e:
+            print(f"Error: {e}")
+        print(f"Iteration {anno_idx+1}/{nannos}")
+    print("Done.")
 
 
 def save_slices_and_masks(nannos: int) -> None:
@@ -64,9 +56,6 @@ def save_slices_and_masks(nannos: int) -> None:
     np.save("d.npy", data)
 
 
-def main() -> None:
-    save_slices_and_masks(250)
-
 
 if __name__ == "__main__":
-    main()
+    save_slices_and_masks2()
