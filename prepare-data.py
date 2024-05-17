@@ -1,12 +1,11 @@
 import os
 
 import matplotlib.pyplot as plt
-import numpy as np
 import pylidc as pl
 
 
 # TODO: test on whole lidc dataset 100GB
-def save_slices_and_masks2() -> None:
+def save_slices_and_masks() -> None:
     """Save imgs and masks with subtlety >= 5 as 512x512 images in ./data."""
 
     os.makedirs("./data/imgs", exist_ok=True)
@@ -32,30 +31,5 @@ def save_slices_and_masks2() -> None:
         print(f"Iteration {anno_idx+1}/{nannos}")
     print("Done.")
 
-
-def save_slices_and_masks(nannos: int) -> None:
-    """Save slices and masks to d.npy file."""
-    imgs = []
-    masks = []
-
-    plt.set_cmap("gray")
-    padding = [(512, 512), (512, 512), (0, 0)]
-
-    annos = pl.query(pl.Annotation).filter(pl.Annotation.subtlety == 5)[:nannos]
-    for anno_idx, anno in enumerate(annos):
-        img = anno.scan.to_volume()
-        mask = anno.boolean_mask(pad=padding)
-        for slice_idx, slice in enumerate(anno.contour_slice_indices):
-            if slice_idx >= mask.shape[2]:
-                break
-            masks.append(mask[:, :, slice_idx])
-            imgs.append(img[:, :, slice])
-        print(f"Iteration {anno_idx+1}/{nannos}")
-
-    data = {"imgs": np.array(imgs), "masks": np.array(masks)}
-    np.save("d.npy", data)
-
-
-
 if __name__ == "__main__":
-    save_slices_and_masks2()
+    save_slices_and_masks()
