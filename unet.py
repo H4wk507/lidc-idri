@@ -2,7 +2,6 @@ from torch import cat, nn
 from torch.nn import functional as F
 
 
-# TODO: this shit is too slow find out why
 class Unet(nn.Module):
     def __init__(self, input_channel=1):
         super().__init__()
