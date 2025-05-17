@@ -17,7 +17,7 @@ def save_slices_and_masks() -> None:
     annos = pl.query(pl.Annotation).filter(pl.Annotation.subtlety >= 5)
     nannos = annos.count()
 
-    for anno_idx, anno in enumerate(annos[1587:]):
+    for anno_idx, anno in enumerate(annos):
         try:
             img = anno.scan.to_volume()
             mask = anno.boolean_mask(pad=padding)
