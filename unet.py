@@ -2,7 +2,7 @@ from torch import cat, nn
 from torch.nn import functional as F
 
 
-class Unet(nn.Module):
+class UNet(nn.Module):
     def __init__(self, input_channel=1):
         super().__init__()
         self.inc = DoubleConv(input_channel, 64)
