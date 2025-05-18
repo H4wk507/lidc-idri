@@ -2,5 +2,5 @@ venv/
 nodules/
 __pycache__/
 d.npy
-*.png
 .ipynb_checkpoints/
+data/
