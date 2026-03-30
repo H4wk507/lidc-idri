@@ -54,7 +54,7 @@ psutil==5.9.8
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pydicom==2.4.4
-Pygments==2.17.2
+Pygments==2.20.0
 pylidc==0.2.3
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
